@@ -1,4 +1,5 @@
 // import { Calendar } from "lucide-react";
+import { Link } from "react-router-dom";
 import { timeStamp } from "../services/timestamp";
 
 function MovieCard({ movie, sectionTitle, type }) {
@@ -43,9 +44,13 @@ function MovieCard({ movie, sectionTitle, type }) {
           </div>
         </div>
         {type === "movies" && (
-          <botton className="bg-[#FFFFFF] w-full cursor-pointer h-12 flex items-center justify-center font-bold text-lg rounded-md text-[#0A0A0A]">
+          <Link
+            to="/MoviesObsession"
+            state={{ movie }}
+            className="bg-[#FFFFFF] w-full cursor-pointer h-12 flex items-center justify-center font-bold text-lg rounded-md text-[#0A0A0A] hover:bg-white/85 transition-colors"
+          >
             Book tickets
-          </botton>
+          </Link>
         )}
         {type === "moviesThisWeek" && (
           <botton className="bg-[#E5E5E5]/5.5 cursor-pointer w-full h-12 flex items-center justify-center border border-white/[0.13] font-bold text-lg rounded-md text-[#D9D9D9]">

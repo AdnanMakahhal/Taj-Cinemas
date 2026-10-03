@@ -51,7 +51,8 @@ function Movies() {
             <p>Plan ahead for your next cinema night.</p>
           </div>
           <p>
-            {String(Math.min(moviesThisWeek.length, 4)).padStart(2, "0")} MOVIES
+            {String(Math.min(moviesThisWeek.length, 10)).padStart(2, "0")}{" "}
+            MOVIES
           </p>
         </div>
 
@@ -77,7 +78,7 @@ function Movies() {
             <p>A first look at what’s next on the big screen.</p>
           </div>
           <p>
-            {String(Math.min(moviesComingSoon.length, 4)).padStart(2, "0")}{" "}
+            {String(Math.min(moviesComingSoon.length, 10)).padStart(2, "0")}{" "}
             MOVIES
           </p>
         </div>

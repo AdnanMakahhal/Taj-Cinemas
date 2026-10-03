@@ -2,43 +2,33 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useRegister } from "../hooks/useRegister";
 import SpinnerMini from "../ui/SpinnerMini";
-import { LockKeyhole, Mail, UserRound } from "lucide-react";
+import { CircleAlert, LockKeyhole, Mail, UserRound } from "lucide-react";
 
 function RegisterForm() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { register, isLoading } = useRegister();
+  const { register, isLoading, error, data, reset } = useRegister();
 
   function handleSubmit(e) {
     e.preventDefault();
-    if (!fullName || !email || !password) return;
-    register(
-      { fullName, email, password },
-      {
-        onSettled: () => {
-          setFullName("");
-          setEmail("");
-          setPassword("");
-        },
-      },
-    );
+    register({ fullName: fullName.trim(), email: email.trim(), password });
   }
 
   return (
     <form
-      className="max-w-[480px] max-h-[657px] bg-[#1A1D25]/68 flex flex-col p-9 border rounded-[24px] border-[#FFFFFF]/12 shadow-[0_8px_25px_rgba(0,0,0,0.15)] backdrop-blur-xs"
+      className="flex w-full max-w-[480px] flex-col rounded-3xl border border-white/10 bg-[#1A1D25]/80 p-6 shadow-[0_20px_60px_rgba(0,0,0,0.3)] backdrop-blur-xl sm:p-9"
       onSubmit={handleSubmit}
     >
-      <div className="mb-8">
-        <h1 className="text-[#FFFFFF] font-semibold text-2xl mb-2">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="mb-2 text-2xl font-semibold text-white sm:text-3xl">
           Create your account
         </h1>
-        <p className="text-[#9E9E9E] font-normal text-sm">
+        <p className="text-sm leading-6 text-white/55">
           Your next cinema night starts here.
         </p>
       </div>
-      <div className="flex flex-col gap-4 flex-1">
+      <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <label
             className="text-[#E6E6E6] font-medium text-sm"
@@ -51,18 +41,32 @@ function RegisterForm() {
               <UserRound className="w-6 h-6 stroke-[#A4A6B0]" />
             </div>
             <input
-              className="w-full h-[52px] block rounded-[10px] border border-white/20 bg-white/3.5 pr-3 pl-11 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40 transition"
+              className="block h-12 w-full rounded-xl border border-white/15 bg-white/[0.04] py-3 pl-11 pr-3 text-white placeholder-white/40 transition focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/10"
               type="text"
               id="fullName"
               placeholder="Enter your full name"
-              autoComplete="fullName"
+              autoComplete="name"
+              required
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={(e) => {
+                setFullName(e.target.value);
+                reset();
+              }}
               disabled={isLoading}
             />
           </div>
         </div>
         <div className="flex flex-col gap-2">
+          {error && (
+            <p
+              id="email-auth-error"
+              role="alert"
+              className="flex items-start gap-2 rounded-lg border border-red-400/20 bg-red-400/10 px-3 py-2 text-xs leading-5 text-red-200"
+            >
+              <CircleAlert className="mt-0.5 size-4 shrink-0" />
+              <span>{error.message}</span>
+            </p>
+          )}
           <label className="text-[#E6E6E6] font-medium text-sm" htmlFor="email">
             Email address
           </label>
@@ -71,13 +75,23 @@ function RegisterForm() {
               <Mail className="w-6 h-6 stroke-[#A4A6B0]" />
             </div>
             <input
-              className="w-full h-[52px] block rounded-[10px] border border-white/20 bg-white/3.5 pr-3 pl-11 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40 transition"
+              className={`block h-12 w-full rounded-xl border bg-white/[0.04] py-3 pl-11 pr-3 text-white placeholder-white/40 transition focus:outline-none focus:ring-2 focus:ring-white/10 ${
+                error
+                  ? "border-red-400/60 focus:border-red-300"
+                  : "border-white/20 focus:border-white/40"
+              }`}
               type="email"
               id="email"
               placeholder="you@example.com"
               autoComplete="username"
+              aria-invalid={Boolean(error)}
+              aria-describedby={error ? "email-auth-error" : undefined}
+              required
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                reset();
+              }}
               disabled={isLoading}
             />
           </div>
@@ -94,13 +108,18 @@ function RegisterForm() {
               <LockKeyhole className="w-6 h-6 stroke-[#A4A6B0]" />
             </div>
             <input
-              className="w-full h-[52px] block rounded-[10px] border border-white/20 bg-white/3.5 pr-4 pl-11 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40 transition"
+              className="block h-12 w-full rounded-xl border border-white/15 bg-white/[0.04] py-3 pl-11 pr-4 text-white placeholder-white/40 transition focus:border-white/40 focus:outline-none focus:ring-2 focus:ring-white/10"
               type="password"
               id="password"
               placeholder="Create a password"
               autoComplete="new-password"
+              minLength={8}
+              required
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                reset();
+              }}
               disabled={isLoading}
             />
           </div>
@@ -110,28 +129,41 @@ function RegisterForm() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3 my-4">
+      <div className="my-5 flex items-start gap-3">
         <input
           type="checkbox"
           id="terms"
-          className="w-4 h-4 rounded cursor-pointer"
+          className="mt-0.5 size-4 shrink-0 cursor-pointer rounded accent-white"
+          required
         />
-        <label htmlFor="terms" className="text-white/70 text-sm cursor-pointer">
+        <label
+          htmlFor="terms"
+          className="cursor-pointer text-sm leading-5 text-white/65"
+        >
           I agree to the Terms of Service and Privacy Policy.
         </label>
       </div>
 
-      <div className="mt-auto">
+      <div>
+        {data && !data.session && (
+          <p role="status" className="mb-3 text-sm text-emerald-300">
+            Account created. Check your email for a confirmation link before
+            signing in.
+          </p>
+        )}
         <button
           disabled={isLoading}
-          className="w-full h-[52px] rounded-[10px] bg-[#FFFFFF] text-[#0D0D0D] font-medium hover:bg-[#FFFFFF]/80 cursor-pointer disabled:opacity-50 transition-all delay-100 flex items-center justify-center"
+          className="flex h-12 w-full cursor-pointer items-center justify-center rounded-xl bg-white font-semibold text-[#0D0D0D] transition hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A1D25] disabled:cursor-wait disabled:opacity-60"
         >
           {!isLoading ? "Create Account" : <SpinnerMini />}
         </button>
       </div>
-      <p className="text-center text-white/70 text-sm mt-4">
+      <p className="mt-5 text-center text-sm text-white/60">
         Already have an account?{" "}
-        <Link to="/Login" className="text-white hover:underline">
+        <Link
+          to="/Login"
+          className="font-medium text-white underline-offset-4 hover:underline"
+        >
           Sign in
         </Link>
       </p>

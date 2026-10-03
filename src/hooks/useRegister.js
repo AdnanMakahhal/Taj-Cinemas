@@ -6,17 +6,22 @@ export function useRegister() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  const { mutate: register, isPending: isLoading } = useMutation({
+  const {
+    mutate: register,
+    isPending: isLoading,
+    error,
+    data,
+    reset,
+  } = useMutation({
     mutationFn: ({ fullName, email, password }) =>
       registerApi({ fullName, email, password }),
     onSuccess: (data) => {
-      queryClient.setQueryData(["user"], data.user);
-      navigate("/Home", { replace: true });
-    },
-    onError: (err) => {
-      console.log("Error registering:", err);
+      if (data.session) {
+        queryClient.setQueryData(["user"], data.user);
+        navigate("/Home", { replace: true });
+      }
     },
   });
 
-  return { register, isLoading };
+  return { register, isLoading, error, data, reset };
 }

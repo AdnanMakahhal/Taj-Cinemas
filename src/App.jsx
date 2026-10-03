@@ -12,6 +12,7 @@ import PageNotFound from "./pages/PageNotFound";
 import AppLayout from "./ui/AppLayout";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
+import MoviesObsession from "./pages/MoviesObsession";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route index element={<Navigate replace to="/Home" />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/Movies" element={<Movies />} />
+          <Route path="/MoviesObsession" element={<MoviesObsession />} />
           <Route path="/Bookings" element={<Bookings />} />
           <Route path="/Offers" element={<Offers />} />
           <Route path="/Notifications" element={<Notifications />} />
