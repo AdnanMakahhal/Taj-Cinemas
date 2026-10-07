@@ -20,38 +20,6 @@ for desktop and mobile screens with a dark cinema-inspired theme.
   used for icons.
 - **ESLint** checks the JavaScript and JSX code.
 
-## Getting started
-
-### Requirements
-
-- Node.js and npm
-- A Supabase project
-- A TMDB API key
-
-### Install and configure
-
-```sh
-npm install
-```
-
-Create a `.env` file in the project root:
-
-```env
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=your-supabase-publishable-key
-VITE_TMDB_API_KEY=your-tmdb-api-key
-```
-
-Use a **Supabase publishable key**, not a Supabase secret/service-role key.
-Vite variables prefixed with `VITE_` are included in browser code, so never put
-private server credentials in them. `.env` is ignored by Git.
-
-Start the development server:
-
-```sh
-npm run dev
-```
-
 ## How the app works
 
 1. **Browse movies.** The Home and Movies pages use TMDB data to show films,
@@ -69,23 +37,3 @@ npm run dev
 5. **Manage an account.** Registration and login use Supabase Auth. Profile
    fields are loaded from and saved to the Auth user's metadata. Signing out
    clears the React Query cache and returns the user to Login.
-
-### Enable booking storage in Supabase
-
-Apply [`supabase/migrations/20261004003000_create_movie_bookings.sql`](./supabase/migrations/20261004003000_create_movie_bookings.sql)
-to your Supabase project before creating or viewing bookings. You can apply it
-with the Supabase CLI in a linked project or run the migration in the Supabase
-Dashboard SQL Editor.
-
-> Seat selection, payment, and live cinema schedules are not implemented yet.
-> Showtimes and cinema choices are sample data; saved bookings remain pending
-> and do not reserve seats or confirm a ticket.
-
-## Project commands
-
-```sh
-npm run dev      # Start the Vite development server
-npm run lint     # Run ESLint
-npm run build    # Create a production build in dist/
-npm run preview  # Preview the production build locally
-```
