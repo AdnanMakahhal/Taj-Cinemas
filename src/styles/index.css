@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 body {
-  background: url(../../public/Assets/Background.svg);
+  background: url("/Assets/Background.svg");
   object-fit: fill;
   width: 100%;
   height: 100%;

@@ -37,3 +37,21 @@ for desktop and mobile screens with a dark cinema-inspired theme.
 5. **Manage an account.** Registration and login use Supabase Auth. Profile
    fields are loaded from and saved to the Auth user's metadata. Signing out
    clears the React Query cache and returns the user to Login.
+
+## Deploying to Vercel
+
+Import the repository into Vercel and use the Vite defaults:
+
+- Build command: `npm run build`
+- Output directory: `dist`
+- Install command: `npm install`
+
+The included `vercel.json` serves the app for client-side routes, so paths such
+as `/Movies` continue to work when opened directly or refreshed. Configure these
+environment variables in the Vercel project settings for the Production,
+Preview, and Development environments as needed; changes take effect on the
+next deployment:
+
+- `VITE_TMDB_API_KEY`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
