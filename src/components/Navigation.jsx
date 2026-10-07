@@ -3,9 +3,11 @@ import { Search, Bell, Settings, UserX, User } from "lucide-react";
 import supabase from "../services/supabase";
 import { useEffect, useState } from "react";
 
-function Navigation({ onOpen }) {
+function Navigation({ onOpenSearch, onOpenNotifications, activePanel }) {
   const linkClass = ({ isActive }) =>
     `transition-colors ${isActive ? "text-white font-medium" : "text-[#FFFFFF]/75 hover:text-[#FFFFFF]"}`;
+  const iconLinkClass = ({ isActive }) =>
+    `flex size-9 items-center justify-center rounded-full hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white ${linkClass({ isActive })}`;
 
   const [session, setSession] = useState(null);
 
@@ -27,8 +29,8 @@ function Navigation({ onOpen }) {
 
   return (
     <nav className="relative">
-      <ul className="flex gap-7">
-        <div className="flex items-center gap-7 text-sm max-sm:hidden">
+      <ul className="flex items-center gap-4 sm:gap-5">
+        <div className="flex items-center gap-5 text-sm max-sm:hidden">
           <li className="cursor-pointer">
             <NavLink to="/Home" className={linkClass}>
               Home
@@ -50,33 +52,46 @@ function Navigation({ onOpen }) {
             </NavLink>
           </li>
         </div>
-        <div className="flex items-center gap-7 text-sm">
+        <div className="flex items-center gap-1 text-sm sm:gap-2">
           <li className="flex shrink-0">
             <button
-              onClick={onOpen}
-              className="text-[#FFFFFF]/75 hover:text-[#FFFFFF] cursor-pointer"
+              type="button"
+              onClick={onOpenSearch}
+              aria-label="Search movies"
+              aria-expanded={activePanel === "search"}
+              aria-controls="search-panel"
+              aria-haspopup="dialog"
+              className={`flex size-9 items-center justify-center rounded-full transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white ${activePanel === "search" ? "bg-white/10 text-white" : "text-white/75"}`}
             >
-              <Search className="size-5" />
+              <Search aria-hidden="true" className="size-5" />
             </button>
           </li>
           <li className="flex shrink-0">
-            <NavLink to="/Notifications" className={linkClass}>
-              <Bell className="size-5" />
-            </NavLink>
+            <button
+              type="button"
+              onClick={onOpenNotifications}
+              aria-label="Open notifications"
+              aria-expanded={activePanel === "notifications"}
+              aria-controls="notifications-panel"
+              aria-haspopup="dialog"
+              className={`flex size-9 items-center justify-center rounded-full transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-white ${activePanel === "notifications" ? "bg-white/10 text-white" : "text-white/75"}`}
+            >
+              <Bell aria-hidden="true" className="size-5" />
+            </button>
           </li>
           <li className="flex shrink-0">
-            <NavLink to="/Settings" className={linkClass}>
-              <Settings className="size-5" />
+            <NavLink to="/Settings" aria-label="Settings" className={iconLinkClass}>
+              <Settings aria-hidden="true" className="size-5" />
             </NavLink>
           </li>
           <li className="flex shrink-0">
             {session?.user ? (
-              <NavLink to="/Profile" className={linkClass}>
-                <User className="size-5" />
+              <NavLink to="/Profile" aria-label="Your profile" className={iconLinkClass}>
+                <User aria-hidden="true" className="size-5" />
               </NavLink>
             ) : (
-              <NavLink to="/Register" className={linkClass}>
-                <UserX className="size-5" />
+              <NavLink to="/Register" aria-label="Create an account" className={iconLinkClass}>
+                <UserX aria-hidden="true" className="size-5" />
               </NavLink>
             )}
           </li>

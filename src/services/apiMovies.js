@@ -5,7 +5,7 @@ const BASE_URL = "https://api.themoviedb.org/3";
 export const IMAGE_BASE = "https://image.tmdb.org/t/p";
 
 export function getMoviesThisWeek() {
-  return getMovies("movie/top_rated");
+  return getMovies("movie/now_playing");
 }
 export function getComingSoonMovies() {
   return getMovies("movie/upcoming");
@@ -15,6 +15,8 @@ export async function getMovies(endpoint) {
   const res = await fetch(
     `${BASE_URL}/${endpoint}?api_key=${API_KEY}&language=en-US`,
   );
+
+  if (!res.ok) throw new Error("Movies could not be loaded. Please try again.");
 
   const data = await res.json();
 
@@ -43,16 +45,17 @@ export async function getMovies(endpoint) {
 
       return {
         ...movie,
+        genres: detail.genres || [],
         certification,
         runtime: detail.runtime,
         backdrop_url: movie.backdrop_path
-          ? `${IMAGE_BASE}/original${movie.backdrop_path}`
+          ? `${IMAGE_BASE}/w1280${movie.backdrop_path}`
           : null,
         poster_path: movie.poster_path
-          ? `${IMAGE_BASE}/original${movie.poster_path}`
+          ? `${IMAGE_BASE}/w500${movie.poster_path}`
           : null,
         logo_path: logo?.file_path || null,
-        logo_url: logo ? `${IMAGE_BASE}/original${logo.file_path}` : null,
+        logo_url: logo ? `${IMAGE_BASE}/w500${logo.file_path}` : null,
         trailer_url: trailer
           ? `https://www.youtube.com/watch?v=${trailer.key}`
           : null,

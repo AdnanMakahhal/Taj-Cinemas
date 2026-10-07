@@ -8,6 +8,8 @@ function MovieCard({ movie, sectionTitle, type }) {
       <img
         src={movie.poster_path}
         alt={movie.title}
+        width="500"
+        height="750"
         loading="lazy"
         decoding="async"
         className="aspect-2/3 w-full object-cover"
@@ -53,14 +55,18 @@ function MovieCard({ movie, sectionTitle, type }) {
           </Link>
         )}
         {type === "moviesThisWeek" && (
-          <botton className="bg-[#E5E5E5]/5.5 cursor-pointer w-full h-12 flex items-center justify-center border border-white/[0.13] font-bold text-lg rounded-md text-[#D9D9D9]">
+          <Link
+            to="/MoviesObsession"
+            state={{ movie, bookingMode: "future" }}
+            className="bg-white/[0.055] w-full h-12 flex items-center justify-center border border-white/[0.13] font-bold text-lg rounded-md text-[#D9D9D9] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+          >
             Choose a day
-          </botton>
+          </Link>
         )}
         {type === "moviesComingSoon" && (
-          <botton className="bg-[#E5E5E5]/5.5 cursor-not-allowed w-full h-12 flex items-center justify-center border border-white/[0.13] font-bold text-lg rounded-md text-[#D9D9D9]">
+          <button type="button" disabled className="bg-[#E5E5E5]/5.5 cursor-not-allowed w-full h-12 flex items-center justify-center border border-white/[0.13] font-bold text-lg rounded-md text-[#D9D9D9]">
             Bookings open soon
-          </botton>
+          </button>
         )}
       </div>
     </div>

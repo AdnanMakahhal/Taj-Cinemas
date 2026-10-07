@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Ticket } from "lucide-react";
 import { useBookings } from "../hooks/useBookings";
 
 function formatDate(date) {
@@ -105,20 +106,25 @@ function Bookings() {
           )}
         </div>
       ) : visibleBookings.length === 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-[#141619]/90 px-5 py-12 text-center">
-          <h2 className="text-lg font-semibold">
+        <div role="status" className="flex min-h-[320px] flex-col items-center justify-center rounded-2xl border border-white/10 bg-[#141619]/90 px-5 py-12 text-center sm:min-h-[360px]">
+          <div aria-hidden="true" className="mb-5 flex size-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/50">
+            <Ticket className="size-7" strokeWidth={1.5} />
+          </div>
+          <h2 className="text-xl font-semibold tracking-tight">
             {filter === "past"
-              ? "No past bookings"
+              ? "No past reservations yet"
               : filter === "upcoming"
-                ? "No upcoming bookings"
-                : "No booking yet"}
+                ? "No upcoming reservations"
+                : "No reservations yet"}
           </h2>
-          <p className="mt-2 text-sm text-white/50">
-            Choose a movie and showtime to start a booking.
+          <p className="mt-2 max-w-sm text-sm leading-6 text-white/50">
+            {filter === "past"
+              ? "Your past cinema reservations will appear here."
+              : "Your next cinema night is waiting. Choose a movie and showtime to make your first reservation."}
           </p>
           <Link
             to="/Movies"
-            className="mt-5 inline-flex rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-[#111214] transition hover:bg-white/85"
+            className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-white px-5 py-2.5 text-sm font-semibold text-[#111214] transition hover:bg-white/85 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >
             Browse movies
           </Link>

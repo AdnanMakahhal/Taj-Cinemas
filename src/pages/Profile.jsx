@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ProfileSkeleton from "../components/ProfileSkeleton";
 import { Navigate } from "react-router-dom";
 import { ChevronsUpDown } from "lucide-react";
 import { useLogout } from "../hooks/useLogout";
@@ -7,6 +8,7 @@ import { updatePassword } from "../services/apiAuth";
 
 function Profile() {
   const [profileDraft, setProfileDraft] = useState(null);
+  const [avatarLoadFailed, setAvatarLoadFailed] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -71,57 +73,7 @@ function Profile() {
   }
 
   if (isLoading) {
-    return (
-      <div
-        aria-busy="true"
-        aria-label="Loading profile"
-        className="mx-auto min-h-screen max-w-7xl px-5 pb-12 pt-24 text-white sm:px-8"
-      >
-        <span className="sr-only">Loading your profile...</span>
-        <div className="mb-7 animate-pulse motion-reduce:animate-none">
-          <div className="h-8 w-48 rounded-lg bg-white/10" />
-          <div className="mt-2 h-4 w-80 max-w-full rounded bg-white/[0.06]" />
-        </div>
-        <div className="grid animate-pulse gap-5 motion-reduce:animate-none lg:grid-cols-[280px_minmax(0,1fr)]">
-          <aside className="h-fit rounded-2xl border border-white/10 bg-[#141619]/90 p-5">
-            <div className="flex flex-col items-center">
-              <div className="size-16 rounded-full bg-white/10" />
-              <div className="mt-3 h-5 w-32 rounded bg-white/10" />
-              <div className="mt-2 h-3 w-28 rounded bg-white/[0.06]" />
-            </div>
-            <div className="mt-5 h-10 rounded-lg bg-white/[0.06]" />
-          </aside>
-          <div className="space-y-4">
-            <section className="rounded-2xl border border-white/10 bg-[#141619]/90 p-5">
-              <div className="mb-4 h-6 w-40 rounded bg-white/10" />
-              <div className="grid gap-4 sm:grid-cols-2">
-                {[0, 1, 2, 3].map((item) => (
-                  <div key={item} className="space-y-2">
-                    <div className="h-3 w-24 rounded bg-white/[0.06]" />
-                    <div className="h-11 rounded-lg bg-white/[0.06]" />
-                  </div>
-                ))}
-              </div>
-            </section>
-            <section className="rounded-2xl border border-white/10 bg-[#141619]/90 p-5">
-              <div className="mb-4 h-6 w-52 rounded bg-white/10" />
-              <div className="grid gap-4 sm:grid-cols-2">
-                {[0, 1].map((item) => (
-                  <div key={item} className="space-y-2">
-                    <div className="h-3 w-28 rounded bg-white/[0.06]" />
-                    <div className="h-11 rounded-lg bg-white/[0.06]" />
-                  </div>
-                ))}
-              </div>
-            </section>
-            <div className="flex gap-2">
-              <div className="h-10 w-32 rounded-lg bg-white/10" />
-              <div className="h-10 w-40 rounded-lg bg-white/[0.06]" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <ProfileSkeleton />;
   }
 
   if (!profileData?.user || !profileData.profile) {
@@ -138,6 +90,8 @@ function Profile() {
 
   const user = profileData.user;
   const profile = profileDraft || profileData.profile;
+  const avatarUrl =
+    user.user_metadata?.avatar_url || user.user_metadata?.avatar || "";
   const error =
     profileLoadError?.message ||
     saveError?.message ||
@@ -184,8 +138,21 @@ function Profile() {
       <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
         <aside className="h-fit rounded-2xl border border-white/10 bg-[#141619]/90 p-5">
           <div className="flex flex-col items-center">
-            <div className="flex size-16 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-xl font-semibold text-white/80">
-              {initials}
+            <div className="relative flex size-16 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/[0.06] text-xl font-semibold text-white/80">
+              {avatarUrl && !avatarLoadFailed ? (
+                <img
+                  src={avatarUrl}
+                  alt={`${profile.firstName} ${profile.lastName}`.trim() || "Profile"}
+                  width="64"
+                  height="64"
+                  loading="eager"
+                  decoding="async"
+                  className="size-full object-cover"
+                  onError={() => setAvatarLoadFailed(true)}
+                />
+              ) : (
+                initials
+              )}
             </div>
             <h2 className="mt-3 text-lg font-semibold">
               {`${profile.firstName} ${profile.lastName}`.trim() ||

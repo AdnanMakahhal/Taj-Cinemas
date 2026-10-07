@@ -1,5 +1,10 @@
-import { useRef } from "react";
-import { Calendar, Play, ChevronLeft, ChevronRight } from "lucide-react";
+import HeroSkeleton from "./HeroSkeleton";
+import {
+  Calendar,
+  Play,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -11,44 +16,40 @@ import { useMovies } from "../hooks/useMovies";
 import { timeStamp } from "../services/timestamp";
 
 function Hero() {
-  const { movies } = useMovies("trending/movie/week");
+  const { movies, isLoading, error } = useMovies("trending/movie/week");
 
-  const prevRef = useRef(null);
-  const nextRef = useRef(null);
+  if (isLoading && movies.length === 0) {
+    return <HeroSkeleton />;
+  }
 
   return (
     <div className="relative w-full h-screen min-h-[500px] 2xl:max-h-[1200px]">
       <Swiper
         spaceBetween={30}
         centeredSlides={true}
-        autoplay={{ delay: 2500, disableOnInteraction: false }}
+        autoplay={{ delay: 2500, disableOnInteraction: false, pauseOnMouseEnter: true }}
         pagination={{ clickable: true }}
-        navigation={false}
-        modules={[Autoplay, Pagination, Navigation]}
-        className="mySwiper w-full h-full"
-        onSwiper={(swiper) => {
-          setTimeout(() => {
-            if (
-              swiper.params.navigation &&
-              typeof swiper.params.navigation !== "boolean"
-            ) {
-              swiper.params.navigation.prevEl = prevRef.current;
-              swiper.params.navigation.nextEl = nextRef.current;
-              swiper.navigation.destroy();
-              swiper.navigation.init();
-              swiper.navigation.update();
-            }
-          });
+        navigation={{
+          prevEl: ".hero-swiper-button-prev",
+          nextEl: ".hero-swiper-button-next",
+          enabled: movies.length > 1,
         }}
+        modules={[Autoplay, Pagination, Navigation]}
+        className="mySwiper hero-carousel w-full h-full"
       >
         {movies.length > 0 ? (
-          movies.slice(0, 7).map((movie) => (
+          movies.slice(0, 7).map((movie, index) => (
             <SwiperSlide key={movie.id}>
               <div className="relative w-full h-full">
                 <img
                   className="absolute inset-0 w-full h-full object-cover"
                   src={movie.backdrop_url}
                   alt={movie.title}
+                  width="1280"
+                  height="720"
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "auto"}
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-[#010101]/25" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
@@ -126,68 +127,43 @@ function Hero() {
         ) : (
           <SwiperSlide>
             <div
-              className="relative w-full h-full bg-[#11161B]"
-              role="status"
-              aria-label="Loading trending movies"
+              className="flex h-full w-full items-center justify-center bg-[#11161B] px-6 text-center text-white"
+              role={error ? "alert" : "status"}
             >
-              <span className="sr-only">Loading trending movies...</span>
-
-              <div aria-hidden="true" className="absolute inset-0">
-                <div className="absolute inset-0 animate-pulse bg-[#202a30]/40" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-
-                <div className="absolute inset-0 z-10 flex flex-col justify-center px-5 sm:px-10 md:px-16 lg:px-24 xl:px-32 2xl:px-44">
-                  <div className="animate-pulse motion-reduce:animate-none">
-                    <div className="mb-3 sm:mb-5 h-16 w-[220px] max-w-full rounded-xl bg-white/10 sm:h-24 sm:w-[320px] md:h-32 md:w-[400px] lg:h-40 lg:w-[480px] xl:h-48 xl:w-[560px] 2xl:h-56 2xl:w-[640px]" />
-
-                    <div className="mb-3 flex flex-wrap items-center gap-2 sm:mb-5 sm:gap-3 md:gap-5">
-                      {["w-24 sm:w-32", "w-24 sm:w-32", "w-20 sm:w-28"].map(
-                        (width, index) => (
-                          <div
-                            key={index}
-                            className={`${width} flex items-center rounded-full border border-white/5 bg-[#202a30]/40 px-3 py-1 sm:px-4 sm:py-1.5 md:px-5 md:py-2 2xl:px-6 2xl:py-2.5`}
-                          >
-                            <div className="h-3 w-full rounded bg-white/10 sm:h-4 md:h-5 lg:h-6 2xl:h-7" />
-                          </div>
-                        ),
-                      )}
-                    </div>
-
-                    <div className="mb-4 w-full space-y-2 sm:mb-5 sm:w-[85%] md:w-[65%] md:space-y-3 lg:w-[50%] xl:w-[45%] 2xl:w-[40%]">
-                      <div className="h-3 w-full rounded bg-white/10 sm:h-4 md:h-5 lg:h-6 2xl:h-8" />
-                      <div className="h-3 w-full rounded bg-white/10 sm:h-4 md:h-5 lg:h-6 2xl:h-8" />
-                      <div className="h-3 w-2/3 rounded bg-white/10 sm:h-4 md:h-5 lg:h-6 2xl:h-8" />
-                    </div>
-
-                    <div className="flex flex-wrap gap-3 sm:gap-5">
-                      <div className="rounded-xl border border-white/5 bg-white/20 px-4 py-2 sm:px-6 sm:py-2.5 md:px-7 md:py-3 2xl:px-9 2xl:py-4">
-                        <div className="h-4 w-16 rounded bg-white/10 sm:h-6 sm:w-20 md:h-7 lg:w-24 2xl:h-8 2xl:w-28" />
-                      </div>
-
-                      <div className="flex items-center gap-2 rounded-xl border border-white/5 bg-[#202a30]/40 px-4 py-2 sm:px-6 sm:py-2.5 md:px-7 md:py-3 2xl:px-9 2xl:py-4">
-                        <div className="h-4 w-4 rounded-full bg-white/10 sm:h-5 sm:w-5 lg:h-6 lg:w-6 2xl:h-7 2xl:w-7" />
-                        <div className="h-4 w-20 rounded bg-white/10 sm:h-6 sm:w-24 md:h-7 lg:w-28 2xl:h-8 2xl:w-36" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div className="max-w-md">
+                <h2 className="text-xl font-semibold sm:text-2xl">
+                  {error ? "Movies are unavailable right now" : "No movies to show"}
+                </h2>
+                <p className="mt-2 text-sm text-white/60 sm:text-base">
+                  {error
+                    ? "Please try again in a moment."
+                    : "Check back soon for the latest movies."}
+                </p>
               </div>
             </div>
           </SwiperSlide>
         )}
 
-        <div
-          ref={prevRef}
-          className="hero-swiper-button-prev swiper-nav-button absolute left-3 sm:left-5 md:left-8 lg:left-10 2xl:left-14 top-1/2 -translate-y-1/2 z-30 hidden sm:flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full border border-white/20 bg-black/40 backdrop-blur-md cursor-pointer text-white shadow-lg"
-        >
-          <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8" />
-        </div>
-        <div
-          ref={nextRef}
-          className="hero-swiper-button-next swiper-nav-button absolute right-3 sm:right-5 md:right-8 lg:right-10 2xl:right-14 top-1/2 -translate-y-1/2 z-30 hidden sm:flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16 rounded-full border border-white/20 bg-black/40 backdrop-blur-md cursor-pointer text-white shadow-lg"
-        >
-          <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 lg:w-8 lg:h-8" />
-        </div>
+        {movies.length > 1 && (
+          <>
+            <button
+              type="button"
+              aria-label="Previous movie"
+              title="Previous movie"
+              className="hero-swiper-button-prev swiper-nav-button"
+            >
+              <ChevronLeft aria-hidden="true" strokeWidth={2.25} />
+            </button>
+            <button
+              type="button"
+              aria-label="Next movie"
+              title="Next movie"
+              className="hero-swiper-button-next swiper-nav-button"
+            >
+              <ChevronRight aria-hidden="true" strokeWidth={2.25} />
+            </button>
+          </>
+        )}
       </Swiper>
     </div>
   );
