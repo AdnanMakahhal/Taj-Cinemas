@@ -46,6 +46,12 @@ Import the repository into Vercel and use the Vite defaults:
 - Output directory: `dist`
 - Install command: `npm install`
 
+For local development, copy `.env.example` to `.env` and fill in the values.
+For Vercel, configure the required Supabase variables below in the Production,
+Preview, and Development environments. A production build fails with a clear
+message if either Supabase variable is missing. After changing Vercel variables,
+redeploy so Vite can include them in the built app.
+
 The included `vercel.json` serves the app for client-side routes, so paths such
 as `/Movies` continue to work when opened directly or refreshed. Configure these
 environment variables in the Vercel project settings for the Production,
